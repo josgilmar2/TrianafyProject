@@ -57,20 +57,14 @@ public class ArtistController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Artist> deleteArtist(@PathVariable Long id) {
-        if(artistService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            List<Song> songsOfAnArtist = songService.findByArtistId(id);
-            List<Song>songsFilter = songsOfAnArtist.stream()
-                    .map(c -> {
-                        c.setArtist(null);
-                        return c;
-                    }).collect(Collectors.toList());
-            songService.addAll(songsFilter);
+        List<Song> songs = songService.findAll();
+        if(artistService.existsById(id)) {
+            songs.stream().
+                    filter(s -> s.getArtist().getId() == id)
+                    .forEach(s -> s.setArtist(null));
             artistService.deleteById(id);
-            return ResponseEntity.noContent().build();
         }
-
+        return ResponseEntity.noContent().build();
     }
 
 }

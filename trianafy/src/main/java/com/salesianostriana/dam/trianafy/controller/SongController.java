@@ -1,6 +1,7 @@
 package com.salesianostriana.dam.trianafy.controller;
 
 import com.salesianostriana.dam.trianafy.dto.song.CreateSongDto;
+import com.salesianostriana.dam.trianafy.dto.song.EditSongDto;
 import com.salesianostriana.dam.trianafy.dto.song.GetSongDto;
 import com.salesianostriana.dam.trianafy.dto.song.SongDtoConverter;
 import com.salesianostriana.dam.trianafy.model.Artist;
@@ -26,7 +27,7 @@ public class SongController {
     private final ArtistService artistService;
 
     @PostMapping("/")
-    public ResponseEntity<Song> create(@RequestBody CreateSongDto createSongDto) {
+    public ResponseEntity<Song> createSong(@RequestBody CreateSongDto createSongDto) {
         if (createSongDto.getArtistId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -58,9 +59,30 @@ public class SongController {
         return ResponseEntity.of(songService.findById(id));
     }
 
-    /*@PutMapping("{id}")
-    public ResponseEntity<EditSongDto> editSong(@PathVariable Long id, @RequestBody EditSongDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Song> editSong(@PathVariable Long id, @RequestBody EditSongDto editSongDto) {
+        if(songService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            Song editSong = songDtoConverter.editSongDtoToSong(editSongDto);
+            Artist artist = artistService.findById(editSongDto.getArtistId()).orElse(null);
+            return ResponseEntity.of(
+                    songService.findById(id)
+                            .map(old -> {
+                                old.setTitle(editSong.getTitle());
+                                old.setAlbum(editSong.getAlbum());
+                                old.setYear(editSong.getYear());
+                                old.setArtist(artist);
+                                return songService.edit(old);
+                            })
+            );
+        }
+    }
 
-    }*/
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Song> deleteSong(@PathVariable Long id) {
+        if(songService.existsById(id))
+           songService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

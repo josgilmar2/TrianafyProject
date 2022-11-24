@@ -37,9 +37,8 @@ public class SongService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
-    public List<Song> findByArtistId(Long id) { return repository.findByArtistId(id); }
 
-    public List<Song> addAll(List<Song> songs) {
-        return repository.saveAll(songs);
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
     }
 }

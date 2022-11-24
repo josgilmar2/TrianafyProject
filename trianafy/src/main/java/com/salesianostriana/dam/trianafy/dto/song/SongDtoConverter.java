@@ -18,9 +18,17 @@ public class SongDtoConverter {
         return GetSongDto.builder()
                 .id(song.getId())
                 .title(song.getTitle())
-                .artistName(song.getArtist().getName())
+                .artistName(song.getArtist() == null ? null : song.getArtist().getName())
                 .album(song.getAlbum())
                 .year(song.getYear())
+                .build();
+    }
+
+    public Song editSongDtoToSong(EditSongDto editSongDto) {
+        return Song.builder()
+                .title(editSongDto.getTitle())
+                .album(editSongDto.getAlbum())
+                .year(editSongDto.getYear())
                 .build();
     }
 

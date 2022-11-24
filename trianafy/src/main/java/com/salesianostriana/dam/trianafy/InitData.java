@@ -28,6 +28,7 @@ public class InitData {
 
         Artist third = new Artist();
         third.setName("Feid");
+        artistService.add(third);
 
         Song firstSong = new Song();
         firstSong.setTitle("Moscow Mule");
