@@ -1,7 +1,6 @@
 package com.salesianostriana.dam.trianafy.controller;
 
 import com.salesianostriana.dam.trianafy.dto.song.CreateSongDto;
-import com.salesianostriana.dam.trianafy.dto.song.EditSongDto;
 import com.salesianostriana.dam.trianafy.dto.song.GetSongDto;
 import com.salesianostriana.dam.trianafy.dto.song.SongDtoConverter;
 import com.salesianostriana.dam.trianafy.model.Artist;
@@ -27,30 +26,32 @@ public class SongController {
     private final ArtistService artistService;
 
     @PostMapping("/")
-    public ResponseEntity<Song> createSong(@RequestBody CreateSongDto createSongDto) {
-        if (createSongDto.getArtistId() == null) {
+    public ResponseEntity<GetSongDto> createSong(@RequestBody CreateSongDto createSongDto) {
+        if (createSongDto.getArtistId() == null || createSongDto.getTitle() == null
+                || createSongDto.getAlbum() == null || createSongDto.getYear() == null) {
             return ResponseEntity.badRequest().build();
         }
         Song newSong = songDtoConverter.createSongDtoToSong(createSongDto);
-        Artist artist = artistService.findById(createSongDto.getArtistId()).orElse(null);
+        Artist artist = artistService.findById(createSongDto.getArtistId()).get();
         newSong.setArtist(artist);
+        songService.add(newSong);
+        GetSongDto response = songDtoConverter.songToGetSongDto(newSong);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(songService.add(newSong));
+                .body(response);
     }
 
     @GetMapping("/")
     public ResponseEntity<List<GetSongDto>> findAllSongs() {
-        List<Song> data = songService.findAll();
-        if(data.isEmpty()) {
+        if(songService.findAll().isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            List<GetSongDto> result =
-                    data.stream()
+            List<GetSongDto> response =
+                    songService.findAll().stream()
                             .map(songDtoConverter::songToGetSongDto)
                             .collect(Collectors.toList());
             return ResponseEntity
                     .ok()
-                    .body(result);
+                    .body(response);
         }
     }
 
@@ -60,11 +61,14 @@ public class SongController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Song> editSong(@PathVariable Long id, @RequestBody EditSongDto editSongDto) {
+    public ResponseEntity<GetSongDto> editSong(@PathVariable Long id, @RequestBody CreateSongDto editSongDto) {
         if(songService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
+        } else if(editSongDto.getArtistId() == null || editSongDto.getTitle() == null
+                || editSongDto.getAlbum() == null || editSongDto.getYear() == null) {
+            return ResponseEntity.badRequest().build();
         } else {
-            Song editSong = songDtoConverter.editSongDtoToSong(editSongDto);
+            Song editSong = songDtoConverter.createSongDtoToSong(editSongDto);
             Artist artist = artistService.findById(editSongDto.getArtistId()).orElse(null);
             return ResponseEntity.of(
                     songService.findById(id)
@@ -73,14 +77,14 @@ public class SongController {
                                 old.setAlbum(editSong.getAlbum());
                                 old.setYear(editSong.getYear());
                                 old.setArtist(artist);
-                                return songService.edit(old);
-                            })
+                                return Optional.of(songDtoConverter.songToGetSongDto(old));
+                            }).orElse(Optional.empty())
             );
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Song> deleteSong(@PathVariable Long id) {
+    public ResponseEntity<?> deleteSong(@PathVariable Long id) {
         if(songService.existsById(id))
            songService.deleteById(id);
         return ResponseEntity.noContent().build();

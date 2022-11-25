@@ -41,4 +41,8 @@ public class SongService {
     public boolean existsById(Long id) {
         return repository.existsById(id);
     }
+
+    public List<Song> findByArtisId(Long id) {
+        return repository.findByArtistId(id);
+    }
 }

@@ -24,12 +24,4 @@ public class SongDtoConverter {
                 .build();
     }
 
-    public Song editSongDtoToSong(EditSongDto editSongDto) {
-        return Song.builder()
-                .title(editSongDto.getTitle())
-                .album(editSongDto.getAlbum())
-                .year(editSongDto.getYear())
-                .build();
-    }
-
 }

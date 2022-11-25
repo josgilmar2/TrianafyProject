@@ -22,6 +22,9 @@ public class ArtistController {
 
     @PostMapping("/")
     public ResponseEntity<Artist> createArtist(@RequestBody Artist a) {
+        if(a.getName() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(artistService.add(a));
     }
@@ -44,6 +47,8 @@ public class ArtistController {
     public ResponseEntity<Artist> editArtist(@PathVariable Long id, @RequestBody Artist a) {
         if(artistService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
+        } else if(a.getName() == null) {
+            return ResponseEntity.badRequest().build();
         } else {
             return ResponseEntity.of(
                     artistService.findById(id)
@@ -56,12 +61,10 @@ public class ArtistController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Artist> deleteArtist(@PathVariable Long id) {
-        List<Song> songs = songService.findAll();
+    public ResponseEntity<?> deleteArtist(@PathVariable Long id) {
         if(artistService.existsById(id)) {
-            songs.stream().
-                    filter(s -> s.getArtist().getId() == id)
-                    .forEach(s -> s.setArtist(null));
+            songService.findByArtisId(id).stream()
+                            .forEach(s -> s.setArtist(null));
             artistService.deleteById(id);
         }
         return ResponseEntity.noContent().build();
