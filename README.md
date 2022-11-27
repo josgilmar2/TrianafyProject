@@ -7,14 +7,13 @@
   <img src="https://img.shields.io/badge/release%20date-november-yellowgreen" alt="Lanzamiento del proyecto" />
   <img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="Licencia" />
 </p>
-</br>
+
 ## Descripción
 **Trianafy** es una aplicación desarrollada con Spring Boot 2.7.5 que nos permite gestionar listas de reproducción
 de música 
-</br>
+
 ## Autor
 #### José Luis Gil Martín
-</br>
 
 ### Entidades
 
@@ -74,7 +73,7 @@ de música
 
 * Descargar IntelliJ IDEA Community Edition
 * Descargar Java jdk 17
-* * Descargar apache-maven 3.8.6
+* Descargar apache-maven 3.8.6
 * Configurar la versón de Java dentro de IntelliJ
 * Clicar en el botón *Edit Configurations*
 * Añadir una nueva configuración de tipo **Maven**
