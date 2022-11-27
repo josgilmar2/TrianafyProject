@@ -1,13 +1,16 @@
 package com.salesianostriana.dam.trianafy;
 
 import com.salesianostriana.dam.trianafy.model.Artist;
+import com.salesianostriana.dam.trianafy.model.Playlist;
 import com.salesianostriana.dam.trianafy.model.Song;
 import com.salesianostriana.dam.trianafy.service.ArtistService;
+import com.salesianostriana.dam.trianafy.service.PlaylistService;
 import com.salesianostriana.dam.trianafy.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -15,34 +18,105 @@ public class InitData {
 
     private final ArtistService artistService;
     private final SongService songService;
+    private final PlaylistService playlistService;
 
     @PostConstruct
-    public void initData() {
-        Artist first = new Artist();
-        first.setName("Bad Bunny");
-        artistService.add(first);
+    public void run() {
 
-        Artist second = new Artist();
-        second.setName("Ozuna");
-        artistService.add(second);
+        Artist a1 = Artist.builder()
+                .name("Joaquín Sabina")
+                .build();
 
-        Artist third = new Artist();
-        third.setName("Feid");
-        artistService.add(third);
+        Artist a2 = Artist.builder()
+                .name("Dua Lipa")
+                .build();
 
-        Song firstSong = new Song();
-        firstSong.setTitle("Moscow Mule");
-        firstSong.setAlbum("Un Verano Sin Ti");
-        firstSong.setYear("2022");
-        firstSong.setArtist(first);
-        songService.add(firstSong);
+        Artist a3 = Artist.builder()
+                .name("Metallica")
+                .build();
 
-        Song secondSong = new Song();
-        secondSong.setTitle("Neverita");
-        secondSong.setAlbum("Un Verano Sin Ti");
-        secondSong.setYear("2022");
-        secondSong.setArtist(first);
-        songService.add(secondSong);
+        List<Artist> artistList = List.of(a1, a2, a3);
+
+        artistList.forEach(artistService::add);
+
+        Song s1a1 = Song.builder()
+                .album("19 días y 500 noches")
+                .artist(a1)
+                .year("1999")
+                .title("19 días y 500 noches")
+                .build();
+
+        Song s2a1 = Song.builder()
+                .album("19 días y 500 noches")
+                .artist(a1)
+                .year("1999")
+                .title("Donde habita el olvido")
+                .build();
+
+        Song s3a1 = Song.builder()
+                .album("19 días y 500 noches")
+                .artist(a1)
+                .year("1999")
+                .title("A mis cuarenta y diez")
+                .build();
+
+        Song s1a2 = Song.builder()
+                .album("Future Nostalgia")
+                .artist(a2)
+                .year("2019")
+                .title("Don't Start Now")
+                .build();
+
+        Song s2a2 = Song.builder()
+                .album("Future Nostalgia")
+                .artist(a2)
+                .year("2021")
+                .title("Love Again")
+                .build();
+
+        Song s1a3 = Song.builder()
+                .album("Metallica")
+                .artist(a3)
+                .year("1991")
+                .title("Enter Sandman")
+                .build();
+
+        Song s2a3 = Song.builder()
+                .album("Metallica")
+                .artist(a3)
+                .year("1991")
+                .title("Unforgiven")
+                .build();
+
+        Song s3a3 = Song.builder()
+                .album("Metallica")
+                .artist(a3)
+                .year("1991")
+                .title("Nothing Else Matters")
+                .build();
+
+        List<Song> songList = List.of(
+                s1a1, s2a1, s3a1,
+                s1a2, s2a2,
+                s1a3, s2a3, s3a3
+        );
+
+        songList.forEach(songService::add);
+
+        Playlist p1 = Playlist.builder()
+                .name("Random")
+                .description("Una lista muy loca")
+                .build();
+
+        playlistService.add(p1);
+
+        p1.addSong(s1a3);
+        p1.addSong(s2a2);
+        p1.addSong(s1a3);
+        p1.addSong(s3a3);
+
+        playlistService.edit(p1);
+
     }
 
 }

@@ -42,7 +42,7 @@ public class SongService {
         return repository.existsById(id);
     }
 
-    public List<Song> findByArtisId(Long id) {
+    public List<Song> findByArtistId(Long id) {
         return repository.findByArtistId(id);
     }
 }
