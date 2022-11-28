@@ -392,7 +392,7 @@ public class PlaylistController {
                                                                 @Parameter(description = "Identificador de la canción a buscar")
                                                                 @PathVariable Long id2) {
         Playlist playlist = playlistService.findById(id1).get();
-        if (playlist.getSongs().contains(songService.findById(id2).get())) {
+        if (songService.findById(id2).isPresent() && playlist.getSongs().contains(songService.findById(id2).get())) {
             return ResponseEntity.ok(songDtoConverter.songToGetOneSongDto(songService.findById(id2).get()));
         } else {
             return ResponseEntity.notFound().build();
@@ -400,7 +400,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "Elimina una canción de una playlist concreta",
-                description = "Si existen dos o más canciones iguales en la misma playlist, se eliminan todas.")
+            description = "Si existen dos o más canciones iguales en la misma playlist, se eliminan todas.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204",
                     description = "Se ha borrado correctamente la canción de la playlist",
@@ -418,7 +418,7 @@ public class PlaylistController {
             return ResponseEntity.notFound().build();
         }
         Playlist playlist = playlistService.findById(id1).get();
-        while(playlist.getSongs().contains(songService.findById(id2).get())) {
+        while (playlist.getSongs().contains(songService.findById(id2).get())) {
             playlist.deleteSong(songService.findById(id2).get());
         }
         playlistService.edit(playlistService.findById(id1).get());
