@@ -414,7 +414,7 @@ public class PlaylistController {
                                                      @PathVariable Long id1,
                                                      @Parameter(description = "Identificador de la canción a borrar")
                                                      @PathVariable Long id2) {
-        if (playlistService.findById(id1).isEmpty()) {
+        if (playlistService.findById(id1).isEmpty() || songService.findById(id2).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Playlist playlist = playlistService.findById(id1).get();
